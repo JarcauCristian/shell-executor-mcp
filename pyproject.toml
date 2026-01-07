@@ -1,0 +1,19 @@
+[project]
+name = "shell-executor"
+version = "0.1.0"
+description = "A secure shell executor that validates everything before it is run and has the possibility of rollback."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aisuite[groq]>=0.1.14",
+    "fabric>=3.2.2",
+    "hvac>=2.4.0",
+    "mcp[cli]>=1.25.0",
+    "pydantic>=2.12.5",
+]
+
+[dependency-groups]
+dev = [
+    "langwatch-scenario>=0.7.14",
+    "pytest>=9.0.2",
+]
