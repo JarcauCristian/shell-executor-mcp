@@ -2133,6 +2133,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aisuite", extra = ["groq"] },
+    { name = "click" },
     { name = "fabric" },
     { name = "hvac" },
     { name = "mcp", extra = ["cli"] },
@@ -2148,6 +2149,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aisuite", extras = ["groq"], specifier = ">=0.1.14" },
+    { name = "click", specifier = ">=8.3.1" },
     { name = "fabric", specifier = ">=3.2.2" },
     { name = "hvac", specifier = ">=2.4.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.25.0" },

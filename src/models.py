@@ -1,6 +1,8 @@
+from dataclasses import dataclass
 from typing import Literal
 
 from pydantic import BaseModel, Field
+from src.shell_verifier import ShellVerifier
 
 
 class ShellScriptAnalysis(BaseModel):
@@ -25,3 +27,9 @@ class CommandResponse(BaseModel):
     stdout: str = Field(description="Stdout of the command.")
     stderr: str = Field(description="Stderr of the command.")
     exit_code: int = Field(description="Exit status code for executing the command.")
+
+
+@dataclass
+class AppContext:
+    verifier: ShellVerifier
+    db: None

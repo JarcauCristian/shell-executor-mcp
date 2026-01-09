@@ -8,7 +8,7 @@ from src.models import CommandResponse
 class ShellExecutor:
     def __init__(self, hostname: str, user: str, key_file: Path) -> None:
         self._conn = fabric.Connection(
-            hostname=hostname,
+            host=hostname,
             user=user,
             connect_kwargs={
                 "key_filename": key_file.as_posix(),
