@@ -3,6 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 from src.shell_verifier import ShellVerifier
+from src.shell_executor import ShellExecutor
 
 
 class ShellScriptAnalysis(BaseModel):
@@ -32,4 +33,5 @@ class CommandResponse(BaseModel):
 @dataclass
 class AppContext:
     verifier: ShellVerifier
+    executor: ShellExecutor
     db: None

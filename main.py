@@ -10,19 +10,20 @@ from mcp.server.session import ServerSession
 from src.models import CommandResponse, AppContext
 from src.shell_executor import ShellExecutor
 from src.shell_verifier import ShellVerifier
-from src.vault_manager import VaultManager
-
-DEFAULT_USERNAME: str = ""
-DEFAULT_KEY_PATH: Path = Path.cwd()
 
 
 @asynccontextmanager
 async def lifespan(server: FastMCP) -> types.AsyncGeneratorType:
     verifier = ShellVerifier()
+    executor = ShellExecutor()
     db = None
 
     try:
-        yield AppContext(verifier, db)
+        yield AppContext(
+            verifier=verifier,
+            executor=executor,
+            db=db
+        )
     finally:
         ...
 
@@ -36,22 +37,28 @@ def execute_single_command(
     hostname: str,
     machine_id: str,
     ctx: Context[ServerSession, AppContext]
-) -> CommandResponse | dict[str, str]:
+) -> CommandResponse | dict[str, str | None]:
     """Execute a single shell command onto the specified hostname"""
+    executor = ctx.request_context.lifespan_context.executor
     verifier = ctx.request_context.lifespan_context.verifier
     response = verifier.verify_script(command)
 
     if response is None:
         return {
-            "result": "Failed to validate the script, aborting..."
+            "result": "Failed to validate the script, aborting...",
+            "reason": None
         }
 
     if not response.safe_to_execute or response.risk_level in ["high", "critical"]:  # ty:ignore[possibly-missing-attribute]
-        return {"result": f"Command `{command}` is not safe to execute, aborting...", "reason": response.model_dump_json()}  # ty:ignore[possibly-missing-attribute]
+        return {
+            "result": f"Command `{command}` is not safe to execute, aborting...",
+            "reason": response.model_dump_json()
+        }  # ty:ignore[possibly-missing-attribute]
 
-    executor = ShellExecutor(hostname, DEFAULT_USERNAME, DEFAULT_KEY_PATH)
+    executor.set_connection_from_machine_id(hostname, machine_id)
         
     response = executor.execute_command(command)
+    # TODO: Save the result of the command to the database for auditing.
     return response
 
 
@@ -66,21 +73,28 @@ async def execute_commands(
     commands: list[str],
     hostname: str,
     machine_id: str
-) -> list[CommandResponse] | dict[str, str]:
+) -> list[CommandResponse] | dict[str, str | None]:
     """Execute a task with progress updates."""
     await ctx.info(f"Starting: {task_name}")
 
+    executor = ctx.request_context.lifespan_context.executor
     verifier = ctx.request_context.lifespan_context.verifier
     script = "\n".join(commands)
 
     response = verifier.verify_script(script)
+    if response is None:
+        return {
+            "result": "Failed to validate the script, aborting...",
+            "reason": None
+        }
+
     if not response.safe_to_execute or response.risk_level in ["high", "critical"]:  # ty:ignore[possibly-missing-attribute]
         return {
             "result": f"Script\n`{script}`\n is not safe to execute, aborting...",
             "reason": response.model_dump_json()  # ty:ignore[possibly-missing-attribute]
         }
 
-    executor = ShellExecutor(hostname, DEFAULT_USERNAME, Path(DEFAULT_KEY_PATH))
+    executor.set_connection_from_machine_id(hostname, machine_id)
 
     steps = len(commands)
     commands_results: list[CommandResponse] = []
@@ -93,6 +107,7 @@ async def execute_commands(
         )
         
         result = executor.execute_command(command)
+        # TODO: Save the result of the command to the database for auditing.
         commands_results.append(result)
 
         await ctx.debug(f"Completed command {command}")
@@ -101,18 +116,6 @@ async def execute_commands(
 
 
 @click.command("shell-executor")
-@click.option(
-    "--username",
-    required=False,
-    type=str,
-    default="ubuntu"
-)
-@click.option(
-    "--key-path",
-    required=False,
-    type=Path,
-    default=Path("executor.key")
-)
 @click.option(
     "--mcp-transport",
     required=False,
@@ -124,16 +127,7 @@ def main(
     key_path: Path,
     mcp_transport: Literal["stdio", "sse", "streamable-http"],
 ) -> None:
-    """Main entrypoint for the MCP server."""
-    global DEFAULT_KEY_PATH, DEFAULT_USERNAME, mcp
-    DEFAULT_KEY_PATH = key_path
-    DEFAULT_USERNAME = username
-    vault_manager = VaultManager()
-
-    private_key = vault_manager.get_ssh_key()
-    with Path(key_path).open(mode="w") as fp:
-        fp.write(private_key)
-
+    """Secure Shell Executor MCP Server."""
     mcp.run(transport=mcp_transport)
 
 
