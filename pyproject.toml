@@ -10,6 +10,7 @@ dependencies = [
     "fabric>=3.2.2",
     "hvac>=2.4.0",
     "mcp[cli]>=1.25.0",
+    "psycopg2-binary>=2.9.11",
     "pydantic>=2.12.5",
 ]
 

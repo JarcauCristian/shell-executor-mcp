@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 from pydantic import BaseModel, Field
+from src.database import Database
 from src.shell_verifier import ShellVerifier
 from src.shell_executor import ShellExecutor
 
@@ -34,4 +35,4 @@ class CommandResponse(BaseModel):
 class AppContext:
     verifier: ShellVerifier
     executor: ShellExecutor
-    db: None
+    db: Database

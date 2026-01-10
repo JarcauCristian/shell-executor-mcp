@@ -13,6 +13,7 @@ class ShellExecutor:
     def __init__(self) -> None:
         self._vault_manager = VaultManager()
         self._conn: fabric.Connection | None = None
+        self._username: str | None = None
 
     def set_connection_from_machine_id(self, hostname: str, machine_id: str) -> None:
         username, private_key = self._vault_manager.get_credentials(machine_id)
@@ -25,6 +26,7 @@ class ShellExecutor:
                 "pkey": pkey
             }
         )
+        self._username = username
 
     def execute_command(self, command: str) -> CommandResponse:
         """Execute a single command onto the specified host."""
@@ -40,6 +42,8 @@ class ShellExecutor:
             }
         )
 
+    def get_username(self) -> str:
+        return self._username or ""
 
     @staticmethod
     def _load_private_key_from_string(
