@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, Field
 
-from src.database import Database
-from src.shell_executor import ShellExecutor
-from src.shell_verifier import ShellVerifier
+if TYPE_CHECKING:
+    from src.database import Database
+    from src.shell_executor import ShellExecutor
+    from src.shell_verifier import ShellVerifier
 
 
 class ShellScriptAnalysis(BaseModel):
@@ -34,6 +35,6 @@ class CommandResponse(BaseModel):
 
 @dataclass
 class AppContext:
-    verifier: ShellVerifier
-    executor: ShellExecutor
-    db: Database
+    verifier: "ShellVerifier"
+    executor: "ShellExecutor"
+    db: "Database"
