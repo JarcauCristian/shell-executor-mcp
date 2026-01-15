@@ -1,3 +1,5 @@
+import os
+
 import hvac
 
 from src import check_env_key
@@ -6,7 +8,7 @@ from src import check_env_key
 class VaultManager:
     def __init__(self) -> None:
         """Initialize the Vault client with AppRole authentication."""
-        use_appauth = bool(check_env_key("VAULT_USE_APPAUTH"))
+        use_appauth = os.getenv("VAULT_USE_APPAUTH")
 
         self._base_url = check_env_key("VAULT_BASE_URL")
         self._role_name = check_env_key("VAULT_ROLE_NAME")
