@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from typing import Literal
 
 from pydantic import BaseModel, Field
+
 from src.database import Database
-from src.shell_verifier import ShellVerifier
 from src.shell_executor import ShellExecutor
+from src.shell_verifier import ShellVerifier
 
 
 class ShellScriptAnalysis(BaseModel):
@@ -18,7 +19,7 @@ class ShellScriptAnalysis(BaseModel):
         description="A list of number representing dangerous lines in the script"
     )
     explanation: str = Field(
-        description="A textual description about the threat identified and the decision process in which the threat was indetified"
+        description="A textual description about the threat identified and the decision process in which the threat was identified"  # noqa: E501
     )
     safe_to_execute: bool = Field(
         description="If it is safe to execute the script than true else false"

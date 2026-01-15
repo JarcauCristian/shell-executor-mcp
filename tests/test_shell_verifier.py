@@ -3,12 +3,12 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, Optional
 
-from dotenv import load_dotenv
 import pytest
 import scenario
+from dotenv import load_dotenv
 
-from src.shell_verifier import ShellVerifier
 from src.models import ShellScriptAnalysis
+from src.shell_verifier import ShellVerifier
 
 
 def create_shell_verifier_agent(
@@ -374,9 +374,9 @@ class TestShellVerifierWithScenario:
                 name=f"malicious_script_detection_{script_data['filename']}",
                 description=f"""
                     A security analyst is submitting a shell script for analysis.
-                    The script is from file '{script_data["filename"]}' and has 
+                    The script is from file '{script_data["filename"]}' and has
                     risk level '{script_data["risk_level"]}'.
-                    The analyst expects the agent to correctly identify this as 
+                    The analyst expects the agent to correctly identify this as
                     a malicious/unsafe script.
                 """,
                 agents=[
@@ -394,7 +394,7 @@ class TestShellVerifierWithScenario:
                 ],
                 script=[
                     scenario.user(
-                        f"Please analyze this shell script for security threats:\n\n```bash\n{script_data['script']}\n```"
+                        f"Please analyze this shell script for security threats:\n\n```bash\n{script_data['script']}\n```"  # noqa: E501
                     ),
                     scenario.agent(),
                     scenario.judge(),
@@ -427,7 +427,7 @@ class TestShellVerifierWithScenario:
                 name=f"safe_script_detection_{script_data['filename']}",
                 description=f"""
                     A security analyst is submitting a shell script for analysis.
-                    The script is from file '{script_data["filename"]}' and has 
+                    The script is from file '{script_data["filename"]}' and has
                     risk level '{script_data["risk_level"]}'.
                     The analyst expects the agent to correctly assess the script's safety.
                 """,
@@ -445,7 +445,7 @@ class TestShellVerifierWithScenario:
                 ],
                 script=[
                     scenario.user(
-                        f"Please analyze this shell script for security threats:\n\n```bash\n{script_data['script']}\n```"
+                        f"Please analyze this shell script for security threats:\n\n```bash\n{script_data['script']}\n```"  # noqa: E501
                     ),
                     scenario.agent(),
                     scenario.judge(),
@@ -502,7 +502,7 @@ class TestShellVerifierWithScenario:
             max_turns=4,
             script=[
                 scenario.user(
-                    f"I found this script on a server. Can you analyze it?\n\n```bash\n{malicious_script['script']}\n```"
+                    f"I found this script on a server. Can you analyze it?\n\n```bash\n{malicious_script['script']}\n```"  # ty:ignore[not-subscriptable]  # noqa: E501
                 ),
                 scenario.agent(),
                 scenario.judge(),
