@@ -64,6 +64,7 @@ def create_shell_verifier_agent(
 
     return ShellVerifierAgentAdapter()
 
+
 @pytest.fixture
 def load_shell_scripts() -> list[dict[str, str | bool]]:
     """Load all shell scripts from test_data directory with their expected properties."""
@@ -91,9 +92,7 @@ def load_shell_scripts() -> list[dict[str, str | bool]]:
 def create_mock_response(response_data: dict[str, Any]) -> SimpleNamespace:
     """Helper function to create a mock AI response object."""
     return SimpleNamespace(
-        choices=[
-            SimpleNamespace(message=SimpleNamespace(content=json.dumps(response_data)))
-        ]
+        choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(response_data)))]
     )
 
 
@@ -115,17 +114,13 @@ class MockAIClient:
 class TestShellVerifierInit:
     """Tests for ShellVerifier.__init__ method."""
 
-    def test_init_without_api_key_raises_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_init_without_api_key_raises_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that initializing without GROQ_API_KEY raises ValueError."""
         # Arrange
         monkeypatch.delenv("GROQ_API_KEY", raising=False)
 
         # Act & Assert
-        with pytest.raises(
-            ValueError, match="groq API key environment variable not present"
-        ):
+        with pytest.raises(ValueError, match="groq API key environment variable not present"):
             ShellVerifier()
 
     def test_init_with_api_key_succeeds(self, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -159,9 +154,7 @@ class TestShellVerifierInit:
 class TestShellVerifierVerifyScript:
     """Tests for ShellVerifier.verify_script method."""
 
-    def test_verify_script_empty_raises_error(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_verify_script_empty_raises_error(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that verifying an empty script raises ValueError."""
         # Arrange
         monkeypatch.setenv("GROQ_API_KEY", "test-api-key")
@@ -200,9 +193,7 @@ class TestShellVerifierVerifyScript:
         assert result.risk_level == "low"
         assert result.safe_to_execute is True
 
-    def test_verify_script_handles_json_code_block(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_verify_script_handles_json_code_block(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that verify_script correctly parses JSON wrapped in code blocks."""
         # Arrange
         monkeypatch.setenv("GROQ_API_KEY", "test-api-key")
@@ -218,17 +209,11 @@ class TestShellVerifierVerifyScript:
 
         class MockClientWithCodeBlock:
             def __init__(self) -> None:
-                self.chat = SimpleNamespace(
-                    completions=SimpleNamespace(create=self._create)
-                )
+                self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
 
             def _create(self, **kwargs: Any) -> SimpleNamespace:
                 return SimpleNamespace(
-                    choices=[
-                        SimpleNamespace(
-                            message=SimpleNamespace(content=json_with_code_block)
-                        )
-                    ]
+                    choices=[SimpleNamespace(message=SimpleNamespace(content=json_with_code_block))]
                 )
 
         monkeypatch.setattr("src.shell_verifier.ai.Client", MockClientWithCodeBlock)
@@ -266,9 +251,7 @@ class TestShellVerifierWithFixture:
             mock_client.set_response(
                 {
                     "risk_level": script_data["risk_level"],
-                    "threats_found": []
-                    if script_data["safe_to_execute"]
-                    else ["potential threat"],
+                    "threats_found": [] if script_data["safe_to_execute"] else ["potential threat"],
                     "dangerous_lines": [],
                     "explanation": f"Analysis of {script_data['filename']}",
                     "safe_to_execute": script_data["safe_to_execute"],
@@ -490,9 +473,7 @@ class TestShellVerifierWithScenario:
         scenario.configure(default_model="openai/gpt-4o")
 
         # Pick one malicious script for detailed conversation test
-        malicious_script = next(
-            (s for s in load_shell_scripts if not s["safe_to_execute"]), None
-        )
+        malicious_script = next((s for s in load_shell_scripts if not s["safe_to_execute"]), None)
 
         if malicious_script is None:
             pytest.skip("No malicious scripts available for testing")

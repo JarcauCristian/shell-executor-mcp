@@ -62,7 +62,7 @@ class VaultManager:
         if not private_key:
             raise ValueError("There is no private_key field in data.")
 
-        username= data.get("username")
+        username = data.get("username")
         if not username:
             raise ValueError("There is no username field in data.")
 
