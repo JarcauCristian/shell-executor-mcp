@@ -2,7 +2,7 @@ from io import StringIO
 from typing import Optional
 
 import fabric
-from paramiko import RSAKey, Ed25519Key, ECDSAKey
+from paramiko import ECDSAKey, Ed25519Key, RSAKey
 from paramiko.pkey import PKey
 
 from src.models import CommandResponse
@@ -19,13 +19,7 @@ class ShellExecutor:
         username, private_key = self._vault_manager.get_credentials(machine_id)
         pkey = self._load_private_key_from_string(private_key)
 
-        self._conn = fabric.Connection(
-            host=hostname,
-            user=username,
-            connect_kwargs={
-                "pkey": pkey
-            }
-        )
+        self._conn = fabric.Connection(host=hostname, user=username, connect_kwargs={"pkey": pkey})
         self._username = username
 
     def execute_command(self, command: str) -> CommandResponse:
@@ -46,27 +40,21 @@ class ShellExecutor:
         return self._username or ""
 
     @staticmethod
-    def _load_private_key_from_string(
-        key_data: str, 
-        passphrase: Optional[str] = None
-    ) -> PKey:
+    def _load_private_key_from_string(key_data: str, passphrase: Optional[str] = None) -> PKey:
         """
         Load SSH private key from string data.
         Tries different key types automatically.
         """
         key_file = StringIO(key_data)
-    
+
         # Try different key types in order of likelihood
         key_classes = [RSAKey, Ed25519Key, ECDSAKey]
-    
+
         for key_class in key_classes:
             try:
                 key_file.seek(0)
-                return key_class.from_private_key(
-                    key_file, 
-                    password=passphrase
-                )
+                return key_class.from_private_key(key_file, password=passphrase)
             except Exception:
                 continue
-    
+
         raise ValueError("Unable to load private key - unsupported format or invalid passphrase")

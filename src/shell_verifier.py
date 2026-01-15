@@ -1,5 +1,5 @@
-import os
 import json
+import os
 from typing import Optional
 
 import aisuite as ai
@@ -31,9 +31,9 @@ class ShellVerifier:
 
         Always respond in JSON format with no other text or explanation beside following this schema:
         {json.dumps(schema, indent=2)}
-        """
+        """  # noqa: E501
 
-    def verify_script(self, script: str) -> ShellScriptAnalysis| None:
+    def verify_script(self, script: str) -> ShellScriptAnalysis | None:
         if script == "":
             raise ValueError("script value should not be empty")
 
@@ -45,7 +45,7 @@ class ShellVerifier:
             {
                 "role": "user",
                 "content": f"""
-                Anaylze this script:
+                Analyze this script:
                 {script}
                 """,
             },
@@ -56,7 +56,7 @@ class ShellVerifier:
                 model=self._model, messages=messages, temperature=0.1
             )
         except Exception as ex:
-            raise RuntimeError("failed to execute the complition") from ex
+            raise RuntimeError("failed to execute the completion") from ex
 
         response_text = response.choices[0].message.content
 

@@ -177,7 +177,7 @@ class Database:
             command=command,
             username=username,
             hostname=hostname,
-            started_at=started_at
+            started_at=started_at,
         )
 
         self._update_command_event(
@@ -185,7 +185,7 @@ class Database:
             exit_code=exit_code,
             stdout=stdout,
             stderr=stderr,
-            started_at=started_at
+            started_at=started_at,
         )
 
         return event_id

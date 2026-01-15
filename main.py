@@ -8,7 +8,7 @@ from mcp.server.fastmcp import Context, FastMCP
 from mcp.server.session import ServerSession
 
 from src.database import Database
-from src.models import CommandResponse, AppContext
+from src.models import AppContext, CommandResponse
 from src.shell_executor import ShellExecutor
 from src.shell_verifier import ShellVerifier
 
@@ -43,10 +43,7 @@ def execute_single_command(
     response = verifier.verify_script(command)
 
     if response is None:
-        return {
-            "result": "Failed to validate the script, aborting...",
-            "reason": None
-        }
+        return {"result": "Failed to validate the script, aborting...", "reason": None}
 
     if not response.safe_to_execute or response.risk_level in ["high", "critical"]:  # ty:ignore[possibly-missing-attribute]
         return {
@@ -75,7 +72,7 @@ def execute_single_command(
 
 @mcp.tool(
     name="execute-commands",
-    description="Execute multiple commands on a specified hostname identified by a machine id in an async manner.",
+    description="Execute multiple commands on a specified hostname identified by a machine id in an async manner.",  # noqa: E501
     structured_output=True,
 )
 async def execute_commands(
