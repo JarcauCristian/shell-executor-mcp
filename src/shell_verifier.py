@@ -1,17 +1,15 @@
 import json
-import os
 from typing import Optional
 
 import aisuite as ai
 
+from src import check_env_key
 from src.models import ShellScriptAnalysis
 
 
 class ShellVerifier:
     def __init__(self, model: Optional[str] = "groq:openai/gpt-oss-20b"):
-        apiKey = os.getenv("GROQ_API_KEY")
-        if apiKey is None:
-            raise ValueError("groq API key environment variable not present")
+        _ = check_env_key("GROQ_API_KEY")
 
         schema = ShellScriptAnalysis.model_json_schema()
 
