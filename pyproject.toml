@@ -18,4 +18,33 @@ dependencies = [
 dev = [
     "langwatch-scenario>=0.7.14",
     "pytest>=9.0.2",
+    "ruff>=0.11.0",
 ]
+build = [
+    "pyinstaller>=6.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+[tool.hatch.envs.build]
+dependencies = [
+    "pyinstaller>=6.0.0",
+]
+
+[tool.hatch.envs.build.scripts]
+executable = "pyinstaller --onefile --name shell-executor main.py"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
