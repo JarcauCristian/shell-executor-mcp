@@ -6,6 +6,7 @@ from typing import Literal
 import click
 from mcp.server.fastmcp import Context, FastMCP
 from mcp.server.session import ServerSession
+from mcp.server.transport_security import TransportSecuritySettings
 
 from src.database import Database
 from src.models import AppContext, CommandResponse
@@ -169,6 +170,9 @@ def main(
         case "streamable-http" | "sse":
             mcp.settings.host = host
             mcp.settings.port = port
+            mcp.settings.transport_security = TransportSecuritySettings(
+                allowed_hosts=["*"], allowed_origins=["*"]
+            )
 
     mcp.run(transport=mcp_transport)
 
