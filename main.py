@@ -171,7 +171,7 @@ def main(
             mcp.settings.host = host
             mcp.settings.port = port
             mcp.settings.transport_security = TransportSecuritySettings(
-                allowed_hosts=["*"], allowed_origins=["*"]
+                enable_dns_rebinding_protection=False, allowed_hosts=["*"], allowed_origins=["*"]
             )
 
     mcp.run(transport=mcp_transport)
