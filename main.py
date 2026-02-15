@@ -33,7 +33,7 @@ mcp = FastMCP(name="Secure shell executor tool with verification.", lifespan=lif
     name="execute-command",
     description="""
     Execute a single commands on a specified hostname identified by a machine id in an async manner.
-    """
+    """,
 )
 def execute_single_command(
     command: str,
@@ -79,7 +79,7 @@ def execute_single_command(
     name="execute-commands",
     description="""
     Execute multiple commands on a specified hostname identified by a machine id in an async manner.
-    """
+    """,
 )
 async def execute_commands(
     task_name: str,
