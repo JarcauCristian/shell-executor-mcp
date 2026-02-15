@@ -146,6 +146,13 @@ async def execute_commands(
     default="stdio",
 )
 @click.option(
+    "--host",
+    required=False,
+    type=str,
+    default="0.0.0.0",
+    help="Host to run the server on (only used with http or sse transport)",
+)
+@click.option(
     "--port",
     required=False,
     type=int,
@@ -154,11 +161,13 @@ async def execute_commands(
 )
 def main(
     mcp_transport: Literal["stdio", "sse", "streamable-http"],
+    host, str,
     port: int,
 ) -> None:
     """Secure Shell Executor MCP Server."""
     match mcp_transport:
         case "streamable-http" | "sse":
+            mcp.settings.host = host
             mcp.settings.port = port
 
     mcp.run(transport=mcp_transport)
