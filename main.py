@@ -161,7 +161,7 @@ async def execute_commands(
 )
 def main(
     mcp_transport: Literal["stdio", "sse", "streamable-http"],
-    host, str,
+    host: str,
     port: int,
 ) -> None:
     """Secure Shell Executor MCP Server."""
