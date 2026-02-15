@@ -29,7 +29,12 @@ async def lifespan(server: FastMCP) -> AsyncIterator[AppContext]:
 mcp = FastMCP(name="Secure shell executor tool with verification.", lifespan=lifespan)
 
 
-@mcp.tool()
+@mcp.tool(
+    name="execute-command",
+    description="""
+    Execute a single commands on a specified hostname identified by a machine id in an async manner.
+    """
+)
 def execute_single_command(
     command: str,
     hostname: str,
@@ -45,11 +50,11 @@ def execute_single_command(
     if response is None:
         return {"result": "Failed to validate the script, aborting...", "reason": None}
 
-    if not response.safe_to_execute or response.risk_level in ["high", "critical"]:  # ty:ignore[possibly-missing-attribute]
+    if not response.safe_to_execute or response.risk_level in ["high", "critical"]:
         return {
             "result": f"Command `{command}` is not safe to execute, aborting...",
             "reason": response.model_dump_json(),
-        }  # ty:ignore[possibly-missing-attribute]
+        }
 
     executor.set_connection_from_machine_id(hostname, machine_id)
 
@@ -72,8 +77,9 @@ def execute_single_command(
 
 @mcp.tool(
     name="execute-commands",
-    description="Execute multiple commands on a specified hostname identified by a machine id in an async manner.",  # noqa: E501
-    structured_output=True,
+    description="""
+    Execute multiple commands on a specified hostname identified by a machine id in an async manner.
+    """
 )
 async def execute_commands(
     task_name: str,
@@ -94,10 +100,10 @@ async def execute_commands(
     if response is None:
         return {"result": "Failed to validate the script, aborting...", "reason": None}
 
-    if not response.safe_to_execute or response.risk_level in ["high", "critical"]:  # ty:ignore[possibly-missing-attribute]
+    if not response.safe_to_execute or response.risk_level in ["high", "critical"]:
         return {
             "result": f"Script\n`{script}`\n is not safe to execute, aborting...",
-            "reason": response.model_dump_json(),  # ty:ignore[possibly-missing-attribute]
+            "reason": response.model_dump_json(),
         }
 
     executor.set_connection_from_machine_id(hostname, machine_id)
@@ -109,7 +115,6 @@ async def execute_commands(
         await ctx.report_progress(
             progress=progress,
             total=1.0,
-            message=f"Executing command {idx}/{steps}",
         )
 
         started_at = datetime.now(timezone.utc).isoformat()
@@ -145,7 +150,7 @@ async def execute_commands(
     required=False,
     type=int,
     default=8000,
-    help="Port to run the server on (only used with streamable-http transport)",
+    help="Port to run the server on (only used with http or sse transport)",
 )
 def main(
     mcp_transport: Literal["stdio", "sse", "streamable-http"],
@@ -154,9 +159,9 @@ def main(
     """Secure Shell Executor MCP Server."""
     match mcp_transport:
         case "streamable-http" | "sse":
-            mcp.run(transport=mcp_transport, port=port)
-        case "stdio":
-            mcp.run(transport=mcp_transport)
+            mcp.settings.port = port
+
+    mcp.run(transport=mcp_transport)
 
 
 if __name__ == "__main__":
