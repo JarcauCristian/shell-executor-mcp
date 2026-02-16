@@ -31,7 +31,7 @@ class ShellExecutor:
         if self._conn is None:
             return CommandResponse(stdout="", stderr="", exit_code=-1)
 
-        response = self._conn.run(command)
+        response = self._conn.run(command, warn=True)
         return CommandResponse(
             **{
                 "stdout": response.stdout.strip(),
