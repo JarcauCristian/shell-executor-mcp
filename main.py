@@ -44,18 +44,7 @@ def execute_single_command(
 ) -> CommandResponse | dict[str, str | None]:
     """Execute a single shell command onto the specified hostname"""
     executor = ctx.request_context.lifespan_context.executor
-    # verifier = ctx.request_context.lifespan_context.verifier
     db = ctx.request_context.lifespan_context.db
-    # response = verifier.verify_script(command)
-
-    # if response is None:
-    #     return {"result": "Failed to validate the script, aborting...", "reason": None}
-
-    # if not response.safe_to_execute or response.risk_level in ["high", "critical"]:
-    #     return {
-    #         "result": f"Command `{command}` is not safe to execute, aborting...",
-    #         "reason": response.model_dump_json(),
-    #     }
 
     executor.set_connection_from_machine_id(hostname, machine_id)
 

@@ -19,7 +19,12 @@ class ShellExecutor:
         username, private_key = self._vault_manager.get_credentials(machine_id)
         pkey = self._load_private_key_from_string(private_key)
 
-        self._conn = fabric.Connection(host=hostname, user=username, connect_kwargs={"pkey": pkey})
+        self._conn = fabric.Connection(
+            host=hostname,
+            user=username,
+            connect_kwargs={"pkey": pkey},
+            config=fabric.Config(runtime_ssh_path=""),
+        )
         self._username = username
 
     def execute_command(self, command: str) -> CommandResponse:
