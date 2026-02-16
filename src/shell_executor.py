@@ -23,7 +23,6 @@ class ShellExecutor:
             host=hostname,
             user=username,
             connect_kwargs={"pkey": pkey},
-            config=fabric.Config(runtime_ssh_path=""),
         )
         self._username = username
 
