@@ -54,7 +54,7 @@ class ShellVerifier:
                 model=self._model, messages=messages, temperature=0.1
             )
         except Exception as ex:
-            raise RuntimeError("failed to execute the completion") from ex
+            raise RuntimeError(f"failed to execute the completion {ex}") from ex
 
         response_text = response.choices[0].message.content
 
